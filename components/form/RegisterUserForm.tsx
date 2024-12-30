@@ -1,0 +1,116 @@
+"use client"
+
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
+import { set, z } from "zod"
+import { Form,} from "@/components/ui/form"
+import CustomFormField from "../CustomForm"
+import SubmitButton from "../SubmitButton"
+import { useState } from "react"
+import { UserFormValidation, UserRegisterFormValidation } from "@/lib/validation"
+import { createUser, userLogin } from "@/lib/action/patient.action"
+import { useRouter } from "next/navigation"
+
+export enum FormFieldType {
+    INPUT = "input",
+    TEXTAREA = "textarea",
+    PHONE_INPUT = "phoneInput",
+    CHECKBOX="checkbox",
+    DATE_PICKER="datePicker",
+    SELECT="select",
+    SKELETON="skeleton",
+
+}
+
+const RegisterUserForm = () => {
+    const router = useRouter()
+    const [isLoading, setIsLoading] = useState(false)
+    const [errorMessage, setErrorMessage] = useState('')
+
+    const form = useForm<z.infer<typeof UserRegisterFormValidation>>({
+        resolver: zodResolver(UserRegisterFormValidation),
+        defaultValues: {
+            name: "",
+            email: "",
+            phone: "",
+            password: "",
+        },
+    })
+
+    async function onSubmit({name, email, phone, password}: z.infer<typeof UserRegisterFormValidation>) {
+        setIsLoading(true)
+        setErrorMessage(''); // Reset error message on form submission
+
+        try {
+            const user = {name, email, phone, password}
+            const userData = await createUser(user);
+            if (userData) router.push(`/`)
+        }catch(error: any) {
+            setIsLoading(false)
+            if (error.response) {
+                const { status, data } = error.response;
+                if (status === 400) {
+                    // Example: if the error is due to user already existing
+                    setErrorMessage(data.message || "注册失败，用户已存在！");
+                } else {
+                    setErrorMessage("服务器错误，请稍后再试！");
+                }
+            } else {
+                setErrorMessage("网络错误，请检查连接！");
+            }
+        }
+    }
+    return (
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
+                <section className="space-y-4">
+                    <h1 className="text-blue-300 font-extrabold text-3xl">注册账号</h1>
+                    {errorMessage && (
+                        <div className="text-red-500 text-sm">
+                            <p>{errorMessage}</p>
+                        </div>
+                    )}
+                </section>
+                <CustomFormField
+                    fieldType={FormFieldType.INPUT}
+                    control={form.control}
+                    name="name"
+                    label=""
+                    placeholder="你的姓名"
+                    iconSrc='/assets/icons/user.svg'
+                    iconAlt='user'
+                />
+                <CustomFormField
+                    fieldType={FormFieldType.INPUT}
+                    control={form.control}
+                    name="email"
+                    label="email"
+                    placeholder="邮箱"
+                    iconSrc='/assets/icons/email.svg'
+                    iconAlt='email'
+                />
+                <CustomFormField
+                    fieldType={FormFieldType.PHONE_INPUT}
+                    control={form.control}
+                    name="phone"
+                    label="phone number"
+                    placeholder="手机号码"
+                    iconSrc='/assets/icons/phone.svg'
+                    iconAlt='phone'
+                />
+                <CustomFormField
+                    fieldType={FormFieldType.INPUT}
+                    control={form.control}
+                    name="password"
+                    label="密码"
+                    placeholder="密码"
+                    iconSrc='/assets/icons/email.svg'
+                    iconAlt='email'
+                />
+                <SubmitButton isLoading={isLoading}>注册</SubmitButton>
+            </form>
+        </Form>
+    )
+};
+
+export default RegisterUserForm;

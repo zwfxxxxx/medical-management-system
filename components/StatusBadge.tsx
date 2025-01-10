@@ -4,12 +4,13 @@ import { StampIcon } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 
-const StatusBadge = ({ status }: {status: Status}) => {
+const StatusBadge = ({ status }: {status: Status | Doctorstatus}) => {
     return (
         <div className={clsx('status-badge', {
-            'bg-green-600': status === 'scheduled',
+            'bg-green-600': status === 'scheduled' || status === 'active' ,
             'bg-blue-600': status === 'pending',
-            'bg-red-600': status === 'cancelled',
+            'bg-red-600': status === 'cancelled' || status === 'inactive',
+
         })}>
             <Image
                 src={StatusIcon[status]}

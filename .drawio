@@ -1,6 +1,6 @@
 <mxfile host="65bd71144e">
     <diagram id="zGYb7RIIhZ7ws5wGuFXv" name="第 1 页">
-        <mxGraphModel dx="3029" dy="2189" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+        <mxGraphModel dx="1818" dy="1657" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
@@ -31,19 +31,19 @@
                     <mxGeometry x="150" y="9" width="30" height="30" as="geometry"/>
                 </mxCell>
                 <mxCell id="18" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-                    <mxGeometry x="227" y="495" width="80" height="80" as="geometry"/>
+                    <mxGeometry x="274" y="197" width="80" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="84" style="edgeStyle=none;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;fontSize=24;" edge="1" parent="1" source="21" target="18">
+                <mxCell id="84" style="edgeStyle=none;html=1;exitX=0.25;exitY=0;exitDx=0;exitDy=0;fontSize=24;" parent="1" source="21" target="18" edge="1">
                     <mxGeometry relative="1" as="geometry"/>
                 </mxCell>
                 <mxCell id="21" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-                    <mxGeometry x="137" y="495" width="80" height="80" as="geometry"/>
+                    <mxGeometry x="184" y="197" width="80" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="22" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-                    <mxGeometry x="317" y="495" width="80" height="80" as="geometry"/>
+                    <mxGeometry x="364" y="197" width="80" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="23" value="" style="whiteSpace=wrap;html=1;aspect=fixed;" parent="1" vertex="1">
-                    <mxGeometry x="407" y="485" width="80" height="80" as="geometry"/>
+                    <mxGeometry x="454" y="197" width="80" height="80" as="geometry"/>
                 </mxCell>
                 <mxCell id="40" style="edgeStyle=none;html=1;fontSize=36;" parent="1" source="25" edge="1">
                     <mxGeometry relative="1" as="geometry">
@@ -154,16 +154,13 @@
                 <mxCell id="74" value="" style="rounded=0;whiteSpace=wrap;html=1;fontSize=18;fontColor=#66FF66;" parent="1" vertex="1">
                     <mxGeometry x="950" y="1610" width="470" height="200" as="geometry"/>
                 </mxCell>
-                <mxCell id="76" value="&lt;font style=&quot;font-size: 48px;&quot;&gt;12-9记: 明天把选医生哪里的下拉框搞成需要选择部门（科室）再选医生&lt;/font&gt;" style="rounded=1;whiteSpace=wrap;html=1;" parent="1" vertex="1">
-                    <mxGeometry x="770" y="-460" width="930" height="470" as="geometry"/>
-                </mxCell>
-                <mxCell id="78" value="&lt;font style=&quot;font-size: 48px;&quot;&gt;dashboard&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="1">
+                <mxCell id="78" value="&lt;font style=&quot;font-size: 48px;&quot;&gt;dashboard&lt;/font&gt;" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" parent="1" vertex="1">
                     <mxGeometry x="217" y="-80" width="250" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="80" value="预约挂号" style="rounded=0;whiteSpace=wrap;html=1;fontSize=24;" vertex="1" parent="1">
+                <mxCell id="80" value="预约挂号" style="rounded=0;whiteSpace=wrap;html=1;fontSize=24;" parent="1" vertex="1">
                     <mxGeometry x="260" width="120" height="60" as="geometry"/>
                 </mxCell>
-                <mxCell id="81" value="登录/注册" style="rounded=0;whiteSpace=wrap;html=1;fontSize=24;" vertex="1" parent="1">
+                <mxCell id="81" value="登录/注册" style="rounded=0;whiteSpace=wrap;html=1;fontSize=24;" parent="1" vertex="1">
                     <mxGeometry x="397" width="120" height="60" as="geometry"/>
                 </mxCell>
             </root>

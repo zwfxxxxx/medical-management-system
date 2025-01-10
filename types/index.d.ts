@@ -7,6 +7,7 @@ declare type SearchParamProps = {
 
 declare type Gender = "男" | "女";
 declare type Status = "pending" | "scheduled" | "cancelled";
+declare type Doctorstatus = "active" | "inactive";
 
 
 declare interface LoginUserParams {

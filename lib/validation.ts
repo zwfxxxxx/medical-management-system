@@ -72,6 +72,33 @@ export const PatientFormValidation = z.object({
         }),
 });
 
+export const DoctorFormValidation = z.object({
+    name: z
+        .string()
+        .min(2, "Name must be at least 2 characters")
+        .max(50, "Name must be at most 50 characters"),
+    password: z.string().min(6, "Password must be at least 6 characters"),
+    gender: z.enum(["男", "女"]),
+    departmentId: z.string().optional(),
+    email: z.string().email("Invalid email address"),
+    phone: z.string().optional(),
+    qualification: z
+        .string()
+        .min(2, "Qualification must be at least 2 characters")
+        .max(500, "Qualification must be at most 500 characters"),
+    availability: z.string().optional(),
+    profile_picture: z.string().optional(),
+    position: z.string().optional(),
+    biography: z.string().optional(),
+    status: z.string().optional()
+});
+
+export const DepartmentFormValidation = z.object({
+    name: z.string().optional(),
+    description: z.string().optional(),
+    managementDoctor: z.string().optional(),
+});
+
 export const CreateAppointmentSchema = z.object({
     primaryPhysician: z.string().min(2, "Select at least one doctor"),
     schedule: z.coerce.date(),

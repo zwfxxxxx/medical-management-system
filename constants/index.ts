@@ -1,4 +1,5 @@
 export const GenderOptions = ["男", "女"];
+export const DoctorStatus = ["active", "inactive"]
 
 export const PatientFormDefaultValues = {
     name: "",
@@ -97,4 +98,7 @@ export const StatusIcon = {
     scheduled: "/assets/icons/check.svg",
     pending: "/assets/icons/pending.svg",
     cancelled: "/assets/icons/cancelled.svg",
+    active: "/assets/icons/check.svg",
+    inactive: "/assets/icons/cancelled.svg",
+
 };

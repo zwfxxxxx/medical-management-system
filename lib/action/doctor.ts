@@ -14,12 +14,50 @@ export const doctorLogin = async (doctor: LoginUserParams) => {
     }
 };
 
-
-export const getDoctorTreatmentData = async (department: string) => {
+export const createDoctor = async (doctor: any) => {
     try{
-        const response = await API.get('/doctors_treatment_data', {
+        const response = await API.post('/add_doctor', {"doctor": doctor}, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export const getDoctorsData = async () => {
+    try{
+        const response = await API.get('/doctors_info');
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+
+export const updateDoctor = async (doctor: any) => {
+    try{
+        const response = await API.put('/modify_doctor', {"doctor": doctor}, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}
+
+export const deleteDoctor = async (doctorId: string) => {
+    try{
+        const response = await API.delete('/del_doctor', {
             params: {
-                department: department
+                doctor_id: doctorId
             }
         });
         return response.data;

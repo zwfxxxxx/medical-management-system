@@ -1,6 +1,4 @@
-import React from "react";
-import { Button } from "./ui/button";
-import Image from "next/image";
+import { Button } from "@/components/ui/button"
 
 interface SubmitButtonProps {
   isLoading: boolean;

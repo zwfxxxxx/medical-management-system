@@ -7,7 +7,7 @@ import { getAppointments } from "@/lib/action/appointment.action";
 
 
 const userPage = async ({ params: { userId } }: SearchParamProps) => {
-    const userAppointments = await getAppointments(userId);
+    // const userAppointments = await getAppointments(userId);
 
     return (
         <div className='mx-auto flex max-w-7xl flex-col space-y-14'>
@@ -123,7 +123,7 @@ const userPage = async ({ params: { userId } }: SearchParamProps) => {
 
                 </section>
                 <p className='text-dark-700'>你的预约记录</p>
-                <DataTable columns={userColumns} data={userAppointments} />
+                {/* <DataTable columns={userColumns} data={userAppointments} /> */}
 
             </main>
 

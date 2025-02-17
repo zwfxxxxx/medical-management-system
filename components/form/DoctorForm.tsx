@@ -15,6 +15,7 @@ import { DoctorStatus, GenderOptions } from "@/constants"
 import { getDepartments } from "@/lib/action/department.action"
 import { SelectItem } from "../ui/select"
 import { useRouter } from "next/navigation"
+import { Button } from "../ui/button"
 
 const DoctorForm = (
     { type, doctor, setOpen }:
@@ -261,7 +262,7 @@ const DoctorForm = (
                     </section>
                 )}
 
-                <SubmitButton isLoading={isLoading} className={`${type === "delete" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}>{buttonLabel}</SubmitButton>
+                <Button className={`${type === "delete" ? "shad-danger-btn" : "shad-primary-btn"} w-full`}>{buttonLabel}</Button>
             </form>
         </Form>
     )

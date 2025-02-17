@@ -47,9 +47,8 @@ declare interface RegisterUserParams extends CreateUserParams {
 }
 
 declare type CreateAppointmentParams = {
-    userId: string | undefined;
     patientId: string | undefined;
-    doctorId: number | undefined;
+    doctorId: string | undefined;
     reason: string | undefined;
     schedule: Date | undefined;
     status: Status;
@@ -69,3 +68,17 @@ declare type UpdateAppointmentParams = {
     appointment: Appointment;
     type: string;
 };
+
+interface Doctor {
+    id: string;
+    name: string;
+    avatar?: string;
+    department?: string;
+    specialization?: string;
+}
+
+interface Department {
+    id: string;
+    name: string;
+    description?: string;
+}

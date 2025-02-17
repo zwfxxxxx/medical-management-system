@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default async function NewAppointment({params: {patientId}}: SearchParamProps) {
     
-    const patient = await getPatient(patientId);
+    // const patient = await getPatient(patientId);
 
     return (
         <div className="flex h-screen max-h-screen">
@@ -21,8 +21,7 @@ export default async function NewAppointment({params: {patientId}}: SearchParamP
                     />
                     <AppointmentForm 
                         type="create"
-                        userId={patient.userId}
-                        patientId={patient.id}
+                        patientId={patientId}
                     />
 
                     <p className='copyright py-12'>© 2024 Medical Management System</p>

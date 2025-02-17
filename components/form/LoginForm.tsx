@@ -11,6 +11,7 @@ import { UserFormValidation } from "@/lib/validation";
 import { createUser, userLogin } from "@/lib/action/patient.action";
 import { useRouter } from "next/navigation";
 
+// 导出FormFieldType枚举
 export enum FormFieldType {
   INPUT = "input",
   TEXTAREA = "textarea",

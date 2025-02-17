@@ -1,104 +1,303 @@
 "use client";
 
-import { Button } from '@/components/ui/button';
+import { useEffect, useState } from 'react';
 import { Card } from '@/components/ui/card';
-import React, { useState } from 'react';
-import 'tailwindcss/tailwind.css';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { formatDateTime } from '@/lib/utils';
+import { useAuth } from '@/contexts/AuthContext';
+import { useRouter } from 'next/navigation';
+import Image from 'next/image';
+import { LogOut } from 'lucide-react';
+import { API } from '@/lib/action/API';
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import Link from 'next/link';
+import { UserButton } from '@/components/UserButton';
 
-const MedicalDashboard = () => {
-    const [patients, setPatients] = useState([
-        { id: 1, name: '张三', disease: '高血压', priority: 1, status: '待诊断' },
-        { id: 2, name: '李四', disease: '糖尿病', priority: 2, status: '待诊断' },
-    ]);
-    const [selectedPatient, setSelectedPatient] = useState(null);
-    const [diagnosis, setDiagnosis] = useState('');
+interface Doctor {
+    id: number;
+    name: string;
+    email: string;
+    phone: string;
+    qualification: string | null;
+    position: string | null;
+    profile_picture: string | null;
+    biography: string | null;
+    status: 'active' | 'inactive';
+    departmentId: number;
+}
 
-    const handleSetAvailable = (id: number) => {
-        const updatedPatients = patients.map((patient) =>
-            patient.id === id ? { ...patient, status: '可就诊' } : patient
-        );
-        setPatients(updatedPatients);
-    };
+interface Appointment {
+    id: string;
+    doctor_name: string;
+    department_name: string;
+    patient_name: string;
+    schedule: Date;
+    appointment_status: 'scheduled' | 'pending' | 'completed';
+    reason: string;
+}
 
-    const handleDiagnosisSubmit = () => {
-        if (selectedPatient && diagnosis) {
-            const updatedPatients = patients.map((patient) =>
-                patient.id === selectedPatient.id
-                    ? { ...patient, status: '诊断完成', diagnosis }
-                    : patient
+const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
+    const { doctorId: authDoctorId, doctorToken, logout, isDoctorAuthenticated } = useAuth();
+    const router = useRouter();
+    const [appointments, setAppointments] = useState<Appointment[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [authChecked, setAuthChecked] = useState(false);
+    const [showDropdown, setShowDropdown] = useState(false);
+
+    useEffect(() => {
+        // 直接从 localStorage 检查登录状态
+        const doctorToken = localStorage.getItem('doctorToken');
+        const doctorId = localStorage.getItem('doctorId');
+        
+        if (!doctorToken || !doctorId) {
+            router.push('/doctor');
+            return;
+        }
+
+        // 初始化数据
+        fetchAppointments();
+    }, []);
+
+    // 获取预约信息
+    const fetchAppointments = async () => {
+        try {
+            const response = await API.get(
+                `/doctor_appointments/${params.doctorId}`,
+                {
+                    headers: {
+                        'Authorization': `Bearer ${doctorToken}`
+                    }
+                }
             );
-            setPatients(updatedPatients);
-            setDiagnosis('');
+            console.log("response.data",response.data   )
+                // 按时间排序
+            if (response.data) {
+                const sortedAppointments = response.data.sort(
+                    (a: Appointment, b: Appointment) =>
+                        new Date(a.schedule).getTime() - new Date(b.schedule).getTime()
+                );
+
+                setAppointments(sortedAppointments);
+            }
+        } catch (error) {
+            console.error('获取预约失败:', error);
+        } finally {
+            setIsLoading(false);
         }
     };
 
-    return (
-        <div className="p-8 space-y-6">
-            <h1 className="text-3xl font-semibold">医生操作界面</h1>
+    useEffect(() => {
+        const interval = setInterval(fetchAppointments, 60000);
+        return () => clearInterval(interval);
+    }, []);
 
-            <div className="flex justify-between">
-                <div className="w-full max-w-xs space-y-4">
-                    <h2 className="text-xl font-medium">患者列表</h2>
-                    {patients.sort((a, b) => a.priority - b.priority).map((patient) => (
-                        <Card key={patient.id} className="p-4 mb-4">
-                            <div className="flex justify-between items-center">
-                                <div>
-                                    <h3 className="font-semibold">{patient.name}</h3>
-                                    <p className="text-gray-500">疾病: {patient.disease}</p>
-                                </div>
-                                <div className="flex space-x-4">
-                                    <Button
-                                        onClick={() => handleSetAvailable(patient.id)}
-                                        className="bg-green-500 hover:bg-green-600"
-                                    >
-                                        设置为可就诊
-                                    </Button>
-                                    <Button
-                                        onClick={() => setSelectedPatient(patient)}
-                                        className="bg-blue-500 hover:bg-blue-600"
-                                    >
-                                        查看诊断
-                                    </Button>
-                                </div>
-                            </div>
-                            <p className="text-sm mt-2 text-gray-400">当前状态: {patient.status}</p>
-                        </Card>
-                    ))}
+    const handleStatusChange = async (appointmentId: string, newStatus: 'pending' | 'completed') => {
+        try {
+            // 如果要将状态改为pending，先检查是否有其他pending状态的预约
+            if (newStatus === 'pending') {
+                const hasPendingAppointment = appointments.some(apt => apt.appointment_status === 'pending');
+                if (hasPendingAppointment) {
+                    alert('请先完成当前正在诊断的患者');
+                    return;
+                }
+            }
+
+            const response = await API.put(
+                `/appointment_status/${appointmentId}`,
+                { status: newStatus },
+                {
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${doctorToken}`
+                    }
+                }
+            );
+            if (response.data) {
+                await fetchAppointments();
+            }
+        } catch (error) {
+            console.error('更新状态失败:', error);
+        }
+    };
+
+    // const getStatusBadge = (status: string) => {
+    //     const statusConfig = {
+    //         scheduled: { label: '排队中', className: 'bg-blue-500' },
+    //         pending: { label: '诊断中', className: 'bg-yellow-500' },
+    //         completed: { label: '已完成', className: 'bg-green-500' }
+    //     };
+    //     const config = statusConfig[status as keyof typeof statusConfig];
+    //     return (
+    //         <Badge className={`${config.className} text-white`}>
+    //             {config.label}
+    //         </Badge>
+    //     );
+    // };
+
+    const renderAppointmentCard = (status: 'scheduled' | 'pending' | 'completed') => {
+        const filteredAppointments = appointments.filter(apt => apt.appointment_status === status);
+        const cardStyles = {
+            scheduled: "border-blue-500/50 bg-gradient-to-br from-blue-500/10 to-blue-500/5",
+            pending: "border-yellow-500/50 bg-gradient-to-br from-yellow-500/10 to-yellow-500/5",
+            completed: "border-green-500/50 bg-gradient-to-br from-green-500/10 to-green-500/5"
+        };
+        const titles = {
+            scheduled: "候诊队列",
+            pending: "当前就诊",
+            completed: "已完成就诊"
+        };
+        const icons = {
+            scheduled: "🕒",
+            pending: "👨‍⚕️",
+            completed: "✅"
+        };
+
+        return (
+            <Card className={`p-4 ${cardStyles[status]} border-2 shadow-lg`}>
+                <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
+                    <div className="flex items-center gap-2">
+                        <span className="text-xl">{icons[status]}</span>
+                        <h3 className="text-lg font-semibold text-gray-200">{titles[status]}</h3>
+                    </div>
+                    <div className="px-3 py-1 rounded-full bg-gray-700/50 text-sm text-gray-300">
+                        {filteredAppointments.length} 人
+                    </div>
                 </div>
-
-                {selectedPatient && (
-                    <div className="w-full max-w-lg space-y-4">
-                        <h2 className="text-xl font-medium">提交诊断结果</h2>
-                        <div className="border p-4 rounded-lg shadow-md">
-                            <h3 className="text-lg font-semibold">{selectedPatient.name}</h3>
-                            <p className="text-sm text-gray-500">疾病: {selectedPatient.disease}</p>
-
-                            <div className="mt-4">
-                                <label htmlFor="diagnosis" className="block text-sm font-medium">
-                                    诊断结果
-                                </label>
-                                <textarea
-                                    id="diagnosis"
-                                    value={diagnosis}
-                                    onChange={(e) => setDiagnosis(e.target.value)}
-                                    className="mt-2 w-full p-2 border rounded-lg"
-                                    rows={4}
-                                    placeholder="输入诊断结果"
-                                />
+                <div className="space-y-3">
+                    {filteredAppointments.map((appointment) => (
+                        <div 
+                            key={appointment.id} 
+                            className="bg-dark-800/50 backdrop-blur-sm rounded-lg p-4 space-y-3 hover:bg-dark-800 transition-all duration-200 border border-gray-700/50"
+                        >
+                            <div className="flex justify-between items-start">
+                                <div className="space-y-1">
+                                    <div className="flex items-center gap-2">
+                                        <span className="font-medium text-gray-200 text-lg">
+                                            {appointment.patient_name}
+                                        </span>
+                                        <span className="text-xs px-2 py-1 rounded-full bg-gray-700 text-gray-300">
+                                            {appointment.department_name}
+                                        </span>
+                                    </div>
+                                    <div className="text-sm text-gray-400">
+                                        预约时间：{formatDateTime(appointment.schedule).dateTime}
+                                    </div>
+                                </div>
+                                <div className="flex gap-2">
+                                    {status === 'scheduled' && (
+                                        <Button
+                                            onClick={() => handleStatusChange(appointment.id, 'pending')}
+                                            size="sm"
+                                            className="bg-blue-500/20 text-blue-400 hover:bg-blue-500/30 border border-blue-500/50"
+                                        >
+                                            开始就诊
+                                        </Button>
+                                    )}
+                                    {status === 'pending' && (
+                                        <Button
+                                            onClick={() => handleStatusChange(appointment.id, 'completed')}
+                                            size="sm"
+                                            className="bg-green-500/20 text-green-400 hover:bg-green-500/30 border border-green-500/50"
+                                        >
+                                            完成就诊
+                                        </Button>
+                                    )}
+                                </div>
                             </div>
+                            {appointment.reason && (
+                                <div className="text-sm bg-gray-800/50 rounded p-2 border border-gray-700/30">
+                                    <span className="text-gray-400">就诊原因：</span>
+                                    <span className="text-gray-300">{appointment.reason}</span>
+                                </div>
+                            )}
+                        </div>
+                    ))}
+                    {filteredAppointments.length === 0 && (
+                        <div className="text-center py-8 text-gray-400 text-sm border-2 border-dashed border-gray-700/50 rounded-lg">
+                            暂无{titles[status].slice(2)}患者
+                        </div>
+                    )}
+                </div>
+            </Card>
+        );
+    };
 
-                            <Button
-                                onClick={handleDiagnosisSubmit}
-                                className="mt-4 bg-blue-500 hover:bg-blue-600 w-full"
+    return (
+        <div className="min-h-screen bg-dark-900">
+            {/* 导航栏 */}
+            <header className='sticky top-0 z-50 backdrop-blur-md bg-black-800/80 transition-all duration-300'>
+                <nav className='flex items-center justify-between px-6 py-4'>
+                    <Link href='/'>
+                        <Image
+                            src='/assets/icons/logo-full.svg'
+                            height={24}
+                            width={120}
+                            alt='Logo'
+                            className='h-8 w-fit'
+                        />
+                    </Link>
+                    <div className="flex gap-6 items-center">
+                        <Link href="/" className="flex items-center gap-2 hover:text-blue-500 transition-colors">
+                            <Image
+                                src='/assets/icons/ai.svg'
+                                height={20}
+                                width={20}
+                                alt='AI'
+                            />
+                            健康AI助手
+                        </Link>
+                        <div className="relative">
+                            <button
+                                onClick={() => setShowDropdown(!showDropdown)}
+                                className="hover:scale-110 transition-transform"
                             >
-                                提交诊断结果
-                            </Button>
+                                <Image
+                                    src='/assets/icons/user.svg'
+                                    height={34}
+                                    width={34}
+                                    alt='User'
+                                />
+                            </button>
+
+                            {showDropdown && (
+                                <div className="absolute right-0 mt-2 w-48 rounded-md shadow-lg bg-gray-800 ring-1 ring-black ring-opacity-5">
+                                    <div className="py-1">
+                                        <Link
+                                            href="/personal"
+                                            className="block px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                                        >
+                                            个人信息
+                                        </Link>
+                                        <button
+                                            onClick={() => logout("doctor")}
+                                            className="block w-full text-left px-4 py-2 text-sm text-gray-300 hover:bg-gray-700"
+                                        >
+                                            退出登录
+                                        </button>
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
-                )}
-            </div>
+                </nav>
+            </header>
+
+            {/* 主要内容 */}
+            <main className="container mx-auto px-4 pt-6 pb-8">
+                <div className="grid grid-cols-3 gap-4">
+                    {renderAppointmentCard('scheduled')}
+                    {renderAppointmentCard('pending')}
+                    {renderAppointmentCard('completed')}
+                </div>
+            </main>
         </div>
     );
 };
 
-export default MedicalDashboard;
+export default DoctorDashboard;

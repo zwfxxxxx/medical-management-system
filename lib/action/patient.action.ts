@@ -2,7 +2,7 @@ import { API } from "./API";
 
 export const userLogin = async (user: LoginUserParams) => {
     try{
-        const response = await API.post('/login', {"user": user}, {
+        const response = await API.post('/login', {"patient": user}, {
             headers: {
                 'Content-Type': 'application/json'
             }

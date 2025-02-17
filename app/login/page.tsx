@@ -6,7 +6,7 @@ import Link from "next/link";
 
 export default function Login({ searchParams }: SearchParamProps) {
   const isAdmin = searchParams.admin === "true";
-  const isDoctor = searchParams.doctor === "true";
+  // const isDoctor = searchParams.doctor === "true";
   return (
     <div className="flex h-screen max-h-screen">
       {isAdmin && <PasskeyModal />}

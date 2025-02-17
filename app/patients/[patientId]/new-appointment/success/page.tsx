@@ -8,22 +8,20 @@ import Link from "next/link";
 
 const Success = async ({ params: { patientId }, searchParams }: SearchParamProps) => {
     const appointmentId = (searchParams?.appointmentId as string) || "";
-    const appointment = await getAppointment(appointmentId);
+    const appointmentData = await getAppointment(appointmentId);
+    console.log("appointment",appointmentData)
 
-    const doctor = Doctors.find((doctor) => doctor.doctorId === appointment.doctorId);
+    // const doctor = Doctors.find((doctor) => doctor.doctorId === appointment.doctorId);
 
     return (
         <div className="flex h-screen max-h-screen px-[5%]">
             <div className="success-img">
-                <Link href="/">
-                    <Image
-                        src="/assets/icons/logo-full.svg"
-                        alt="logo"
-                        width={1000}
-                        height={1000}
-                        className="h-10 w-fit"
-                    />
-                </Link>
+                <div className="flex items-center gap-2 mb-3">
+                    <span className="text-gray-400">就诊人</span>
+                    <p className="text-lg font-semibold text-blue-300">
+                        {appointmentData.patientName}
+                    </p>
+                </div>
                 <section className="flex flex-col items-center">
                     <Image
                         src="/assets/gifs/success.gif"
@@ -41,13 +39,13 @@ const Success = async ({ params: { patientId }, searchParams }: SearchParamProps
                     <p className="text-lg font-bold">预约信息：</p>
                     <div className="flex items-center gap-3">
                         <Image
-                            src={doctor?.image!}
+                            src={appointmentData?.image!}
                             alt="doctor-image"
                             width={100}
                             height={100}
                             className="size-6"
                         />
-                        <p className="whitespase-nowrap">{doctor?.name}</p>
+                        <p className="whitespase-nowrap">{appointmentData?.doctorName}</p>
                     </div>
                     <div className="flex gap-2">
                         <Image
@@ -56,24 +54,33 @@ const Success = async ({ params: { patientId }, searchParams }: SearchParamProps
                             width={24}
                             height={24}
                         />
-                        <p className="text-lg font-bold">{(doctor?.department || "？？？？")}</p>
+                        <p className="text-lg font-bold">{appointmentData.departmentName}{(appointmentData?.position || "？？？？")}</p>
                         <Image
                             src="/assets/icons/calendar.svg"
                             alt="calendar"
                             width={24}
                             height={24}
                         />
-                        <p className="text-lg font-bold">{formatDateTime(appointment.schedule).dateTime}</p>
+                        <p className="text-lg font-bold">{formatDateTime(appointmentData.appointmentSchedule).dateTime}</p>
                     </div>
                 </section>
-                <div className="flex flew-col items-center justify-center gap-10">
+                <div className="flex items-center justify-center gap-6 mt-8">
                     <Button
                         variant="outline"
-                        className="shad-primary-btn w-fit rounded-lg shadow-md px-8 py-3 text-blue-400 border-blue-300 bg-white hover:bg-blue-200 hover:text-blue-600 hover:shadow-lg transition-all duration-300 ease-in-out transform hover:-translate-y-1 hover:scale-105"
+                        className="bg-blue-500 hover:bg-blue-600 text-white font-medium border-none rounded-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
                         asChild
                     >
-                        <Link href={`/dashboard`}>
-                            回到首页
+                        <Link href={`/`}>
+                            返回首页
+                        </Link>
+                    </Button>
+                    <Button
+                        variant="outline"
+                        className="bg-white text-blue-500 font-medium border-blue-500 hover:bg-blue-50 rounded-lg px-8 py-3 shadow-lg hover:shadow-xl transition-all duration-300"
+                        asChild
+                    >
+                        <Link href={`/patients/${patientId}/appointments`}>
+                            查看预约
                         </Link>
                     </Button>
                 </div>

@@ -6,6 +6,7 @@ export const getDepartments = async() => {
         return response.data;
     } catch (error) {
         console.log(error)
+        return []  // 返回空数组作为默认值
     }
 }
 

@@ -1,16 +1,33 @@
 import { API } from "./API";
 
-export const doctorLogin = async (doctor: LoginUserParams) => {
-    try{
-        const response = await API.post('/doctor_login', {"doctor": doctor}, {
+export const doctorLogin = async (doctor: { phone: string; password: string }) => {
+    try {
+        const response = await API.post('/doctor_login', { doctor }, {
             headers: {
                 'Content-Type': 'application/json'
             }
         });
-        return response.data;
+        
+        const data = response.data;
+        
+        if (data) {
+            return {
+                success: true,
+                token: data.token,
+                doctorId: data.doctorId,
+            };
+        } else {
+            return {
+                success: false,
+                message: data.message || '登录失败'
+            };
+        }
     } catch (error) {
-        console.log(error);
-        throw error;
+        console.error('Doctor login error:', error);
+        return {
+            success: false,
+            message: '登录失败，请重试'
+        };
     }
 };
 

@@ -1,5 +1,6 @@
 "use client";
 
+import React from "react";
 import { ColumnDef } from "@tanstack/react-table";
 
 import { Button } from "@/components/ui/button";
@@ -44,13 +45,13 @@ export const departmentColumns: ColumnDef<department>[] = [
         accessorKey: "description",
         header: "描述",
         cell: ({ row }) => {
-            const description = row.original.description;
+            const description = row.original.description || '';
 
             return (
                 <div className="relative">
                     <p
                         className="text-14-medium overflow-hidden max-w-[150px] whitespace-nowrap text-ellipsis"
-                        title={description.length > 10 ? description : ''} // 当长度超过10时显示完整内容
+                        title={description.length > 10 ? description : ''}
                     >
                         {description.length > 10 ? `${description.substring(0, 10)}...` : description}
                     </p>
@@ -59,14 +60,13 @@ export const departmentColumns: ColumnDef<department>[] = [
         },
     },
     {
-        accessorKey: "managementDctorName",
+        accessorKey: "managementDoctorName",
         header: "负责人",
         cell: ({ row }) => (
             <p className="text-14-regular min-w-[100px]">
                 {row.original.managementDoctorName}
             </p>
         )
-
     },
     {
         accessorKey: "phone",

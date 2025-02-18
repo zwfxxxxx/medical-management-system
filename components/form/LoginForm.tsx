@@ -43,10 +43,10 @@ const LoginForm = () => {
         setIsLoading(true);
         try {
             const user = { phone, password };
-            // const isLogin = await login(user) as boolean;
-            // if(isLogin){
+            const isLogin = await login(user) as boolean;
+            if(isLogin){
                 router.push("/")
-            // }
+            }
             // localStorage.setItem('token', userData.token);
         } catch (error) {
             console.log("error", error);

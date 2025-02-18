@@ -1,41 +1,46 @@
 import { create } from "zustand";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { API } from "@/lib/action/API";
+
 interface AuthState {
   isLoggedIn: boolean;
-  token: string;
   user: { name: string; email: string; userId: string };
-  login: (user: { phone: string; password: string }) => unknown;
+  login: (user: { phone: string; password: string }) => Promise<boolean>;
   logout: () => void;
 }
 
-export const useAuthStore = create<AuthState>((set) => ({
-  isLoggedIn: false,
-  token: "",
-  user: { name: "", email: "", userId: "" },
-  async login(user: { phone: string; password: string }) {
-    try {
-      const response = await API.post('/login', { "patient": user }, {
-        headers: {
-          'Content-Type': 'application/json'
+export const useAuthStore = create<AuthState>()(
+  persist(
+    (set) => ({
+      isLoggedIn: false,
+      user: { name: "", email: "", userId: "" },
+      async login(user: { phone: string; password: string }) {
+        try {
+          const response = await API.post(
+            "/login",
+            { patient: user },
+            { headers: { "Content-Type": "application/json" } }
+          );
+          const { token, userId, name, email } = response.data;
+          set({ isLoggedIn: true, user: { userId, name, email } });
+          localStorage.setItem("token",token)
+          return true;
+        } catch (error) {
+          console.error("Login failed:", error);
+          return false;
         }
-      });
-      console.log("respose", response)
-      const { token, userId, name, email } = response.data;
-
-      set({ user: { userId, name, email }, token, isLoggedIn: true });
-      return true
-    } catch (error) {
-      console.log(error);
-      return false;
+      },
+      logout: () => {
+        set({ 
+          isLoggedIn: false, 
+          user: { name: "", email: "", userId: "" } 
+        });
+        localStorage.setItem("token", "")
+      },
+    }),
+    {
+      name: "auth-storage", // 存储名称
+      storage: createJSONStorage(() => localStorage), // 使用 localStorage 存储
     }
-  },
-  logout: () => set({ isLoggedIn: false }),
-  // login: (user) =>
-  //   axios.post("/api/login", user).then((res) => {
-  //     set({ isLoggedIn: true, token: res.data.token, user: res.data.user });
-  //   }),
-  // logout: () =>
-  //   axios.delete("/api/logout").then(() => {
-  //     set({ isLoggedIn: false, token: "" });
-  //   }),
-}));
+  )
+);

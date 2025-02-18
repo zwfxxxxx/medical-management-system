@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button"
-
+import Image from "next/image"
 interface SubmitButtonProps {
   isLoading: boolean;
   className?: string;

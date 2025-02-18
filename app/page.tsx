@@ -108,7 +108,7 @@ const Dashboard = () => {
           <Link
             href={
               isLoggedIn
-                ? `/user/${user.userId}/patientRegister`
+                ? `/patients/${user.userId}/new-appointment`
                 : "/login?redirect=schedule"
             }
             className="hover:text-blue-500 transition-colors"

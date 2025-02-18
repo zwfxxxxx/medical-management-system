@@ -10,7 +10,19 @@ export const UserRegisterFormValidation = z.object({
     name: z.string().min(2, "必须至少2个字符").max(50, "不能超过50个字符"),
     email: z.string().email("请输入正确的邮箱格式"),
     phone: z.string().refine((Phone) => /^\+86\d{11}$/.test(Phone) || /^86\d{11}$/.test(Phone) || /^1\d{10}$/.test(Phone), "请输入正确的手机号码"),
-    password: z.string().min(6, "密码必须至少6个字符").max(50, "密码不能超过50个字符")
+    password: z.string().min(6, "密码必须至少6个字符").max(50, "密码不能超过50个字符"),
+    birthDate: z.coerce.date(),
+    gender: z.enum(["男", "女"]),
+    address: z
+        .string()
+        .min(2, "Address must be at least 5 characters")
+        .max(500, "Address must be at most 500 characters"),
+    occupation: z
+        .string()
+        .min(2, "Occupation must be at least 2 characters")
+        .max(500, "Occupation must be at most 500 characters"),
+        identificationType: z.string().optional(),
+    identificationNumber: z.string().optional(),
 })
 
 export const PatientFormValidation = z.object({

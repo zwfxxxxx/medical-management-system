@@ -2,25 +2,11 @@
 
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
-import { set, z } from "zod";
 import { Form } from "@/components/ui/form";
-import CustomFormField from "../CustomForm";
 import SubmitButton from "../SubmitButton";
-import { useState } from "react";
-import { getAppointmentSchema } from "@/lib/validation";
-import { createUser } from "@/lib/action/patient.action";
-import { useRouter } from "next/navigation";
-import { FormFieldType } from "./LoginForm";
 import { Doctors } from "@/constants";
 import { SelectItem } from "../ui/select";
 import Image from "next/image";
-import {
-  cancelAppointment,
-  createAppointment,
-} from "@/lib/action/appointment.action";
-import { zodResolver } from "@hookform/resolvers/zod"
-import { useForm } from "react-hook-form"
-import { Form, } from "@/components/ui/form"
 import CustomFormField from "../CustomForm"
 import { useState, useEffect } from "react"
 import { getAppointmentSchema } from "@/lib/validation"
@@ -42,8 +28,8 @@ const AppointmentForm = (
 ) => {
     const AppointmentValidation = getAppointmentSchema(type);
 
-  const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+    const router = useRouter();
+    const [isLoading, setIsLoading] = useState(false);
 
     const form = useForm<z.infer<typeof AppointmentValidation>>({
         resolver: zodResolver(AppointmentValidation),

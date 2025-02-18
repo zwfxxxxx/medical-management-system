@@ -11,14 +11,15 @@ import React, { useState } from "react";
 import ChatCard from "@/components/ChatCard";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { aiChat } from "@/lib/action/ai.action";
 
 const AiButton = () => {
   const pathName = usePathname();
   const [query, setQuery] = useState("");
   const [chats, setChats] = useState([
     {
-      role: "default",
-      content: "How can I help you?",
+      role: "assistant",
+      content: "你好，我是医疗助手，有什么可以帮助您？",
     },
   ]);
 
@@ -28,15 +29,18 @@ const AiButton = () => {
 
   const handleSubmit = () => {
     if (!query) return;
-
-    setChats((prev) => {
-      return [
-        ...prev,
-        { role: "user", content: query },
-        { role: "aginst", content: "hello there, what can I help you?" },
-      ];
-    });
+    const newChats = [...chats, { role: "user", content: query }];
+    setChats(newChats);
     setQuery("");
+
+    aiChat(newChats).then((response) => {
+      setChats((prev) => { 
+        return [
+          ...prev,
+          { role: "assistant", content: response.response },
+        ];
+      });
+    });
   };
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {

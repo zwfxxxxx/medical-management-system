@@ -36,20 +36,21 @@ const RegisterUserForm = () => {
       email: "",
       phone: "",
       password: "",
+      birthDate: new Date(),
+      gender: "男" as "男" | "女",
+      occupation: "",
+      address: "",
+      identificationType: undefined,
+      identificationNumber: undefined
     },
   });
 
-  async function onSubmit({
-    name,
-    email,
-    phone,
-    password,
-  }: z.infer<typeof UserRegisterFormValidation>) {
+  async function onSubmit(form: z.infer<typeof UserRegisterFormValidation>) {
     setIsLoading(true);
     setErrorMessage(""); // Reset error message on form submission
 
     try {
-      const user = { name, email, phone, password };
+      const user = {...form};
       const userData = await createUser(user);
       if (userData) router.push(`/`);
     } catch (error: any) {

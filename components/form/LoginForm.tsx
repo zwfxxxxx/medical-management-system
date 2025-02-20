@@ -8,77 +8,81 @@ import CustomFormField from "../CustomForm";
 import SubmitButton from "../SubmitButton";
 import { useState } from "react";
 import { UserFormValidation } from "@/lib/validation";
-import { useAuthStore } from "@/store/authState"
+import { useAuthStore } from "@/store/authState";
 import { useRouter } from "next/navigation";
-
 
 // 导出FormFieldType枚举
 export enum FormFieldType {
-    INPUT = "input",
-    TEXTAREA = "textarea",
-    PHONE_INPUT = "phoneInput",
-    CHECKBOX = "checkbox",
-    DATE_PICKER = "datePicker",
-    SELECT = "select",
-    SKELETON = "skeleton",
+  INPUT = "input",
+  TEXTAREA = "textarea",
+  PHONE_INPUT = "phoneInput",
+  CHECKBOX = "checkbox",
+  DATE_PICKER = "datePicker",
+  SELECT = "select",
+  SKELETON = "skeleton",
 }
 
 const LoginForm = () => {
-    const router = useRouter();
-    const [isLoading, setIsLoading] = useState(false);
-    const { login } = useAuthStore();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const { login } = useAuthStore();
 
-    const form = useForm<z.infer<typeof UserFormValidation>>({
-        resolver: zodResolver(UserFormValidation),
-        defaultValues: {
-            phone: "",
-            password: "",
-        },
-    });
+  const form = useForm<z.infer<typeof UserFormValidation>>({
+    resolver: zodResolver(UserFormValidation),
+    defaultValues: {
+      phone: "",
+      password: "",
+    },
+  });
 
-    async function onSubmit({
-        phone,
-        password,
-    }: z.infer<typeof UserFormValidation>) {
-        setIsLoading(true);
-        try {
-            const user = { phone, password };
-            const isLogin = await login(user) as boolean;
-            if(isLogin){
-                router.push("/")
-            }
-            // localStorage.setItem('token', userData.token);
-        } catch (error) {
-            console.log("error", error);
-        }
+  async function onSubmit({
+    phone,
+    password,
+  }: z.infer<typeof UserFormValidation>) {
+    setIsLoading(true);
+    try {
+      const user = { phone, password };
+      const isLogin = await login(user);
+      console.log("isLogin", isLogin);
+      if (isLogin.status) {
+        router.push(
+          isLogin.role === "doctor"
+            ? `/doctor/${isLogin.userId}/dashboard`
+            : "/"
+        );
+      }
+      // localStorage.setItem('token', userData.token);
+    } catch (error) {
+      console.log("error", error);
     }
-    return (
-        <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
-                <section className="space-y-4">
-                    <h1 className="text-blue-300 font-extrabold text-3xl">
-                        欢迎登录 [慧医系统]
-                    </h1>
-                </section>
-                <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    control={form.control}
-                    name="phone"
-                    label="账号"
-                    placeholder="电话或邮箱"
-                    iconSrc="/assets/icons/user.svg"
-                    iconAlt="user"
-                />
-                <CustomFormField
-                    fieldType={FormFieldType.INPUT}
-                    control={form.control}
-                    name="password"
-                    label="密码"
-                    placeholder="密码"
-                    iconSrc="/assets/icons/password.svg"
-                    iconAlt="email"
-                />
-                {/* <CustomFormField
+  }
+  return (
+    <Form {...form}>
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6 flex-1">
+        <section className="space-y-4">
+          <h1 className="text-blue-300 font-extrabold text-3xl">
+            欢迎登录 [慧医系统]
+          </h1>
+        </section>
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="phone"
+          label="账号"
+          placeholder="电话或邮箱"
+          iconSrc="/assets/icons/user.svg"
+          iconAlt="user"
+        />
+        <CustomFormField
+          fieldType={FormFieldType.INPUT}
+          control={form.control}
+          name="password"
+          label="密码"
+          placeholder="密码"
+          iconSrc="/assets/icons/password.svg"
+          iconAlt="email"
+        />
+        {/* <CustomFormField
                     fieldType={FormFieldType.PHONE_INPUT}
                     control={form.control}
                     name="phone"
@@ -87,7 +91,7 @@ const LoginForm = () => {
                     iconSrc='/assets/icons/phone.svg'
                     iconAlt='phone'
                 /> */}
-                {/* <CustomFormField
+        {/* <CustomFormField
                     fieldType={FormFieldType.INPUT}
                     control={form.control}
                     name="name"
@@ -114,10 +118,10 @@ const LoginForm = () => {
                     iconSrc='/assets/icons/phone.svg'
                     iconAlt='phone'
                 /> */}
-                <SubmitButton isLoading={isLoading}>登录</SubmitButton>
-            </form>
-        </Form>
-    );
+        <SubmitButton isLoading={isLoading}>登录</SubmitButton>
+      </form>
+    </Form>
+  );
 };
 
 export default LoginForm;

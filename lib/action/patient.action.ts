@@ -64,3 +64,17 @@ export const getPatient = async (patientId: string) => {
         throw error;
     } 
 }
+
+export const updatePatient = async ( patient: any) => {
+    try{
+        const response = await API.post('/update_patient', patient, {
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.log(error);
+        throw error;
+    }
+}

@@ -7,6 +7,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { useAuthStore } from "@/store/authState";
 import WaitingTable from "@/components/WaitingTable";
+import UserHead from "@/components/UserHead";
 
 const Dashboard = () => {
   const userAppointments: UserAppointment[] = [];
@@ -116,16 +117,7 @@ const Dashboard = () => {
             预约挂号
           </Link>
           {isLoggedIn ? (
-            <Link href={`/user/${user.userId}/personal`}>
-              <Image
-                src="/assets/icons/userinfo.svg"
-                height={34}
-                width={34}
-                alt="UserInfo"
-                title="个人信息"
-                className="hover:scale-110 transition-transform"
-              />
-            </Link>
+           <UserHead />
           ) : (
             <Link
               href="/login"

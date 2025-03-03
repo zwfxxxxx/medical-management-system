@@ -76,12 +76,7 @@ export const PatientFormValidation = z.object({
     //     .refine((value) => value === true, {
     //         message: "You must consent to disclosure in order to proceed",
     //     }),
-    privacyConsent: z
-        .boolean()
-        .default(false)
-        .refine((value) => value === true, {
-            message: "You must consent to privacy in order to proceed",
-        }),
+    // privacyConsent: z.string().optional(),
 });
 
 export const DoctorFormValidation = z.object({
@@ -109,6 +104,17 @@ export const DepartmentFormValidation = z.object({
     name: z.string().optional(),
     description: z.string().optional(),
     managementDoctor: z.string().optional(),
+});
+
+export const ReportFormValidation = z.object({
+    chief_complaint: z.string().min(1, "不能为空"),
+    current_history: z.string().min(1, "不能为空"),
+    medical_history: z.string().min(1, "不能为空"),
+    epidemiology: z.string().min(1, "不能为空"),
+    physical_exam: z.string().min(1, "不能为空"),
+    auxiliary_tests: z.string().min(1, "不能为空"),
+    diagnosis: z.string().min(1, "不能为空"),
+    treatment: z.string().min(1, "不能为空"),
 });
 
 export const CreateAppointmentSchema = z.object({

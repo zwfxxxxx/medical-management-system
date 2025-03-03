@@ -67,7 +67,7 @@ export const getPatient = async (patientId: string) => {
 
 export const updatePatient = async ( patient: any) => {
     try{
-        const response = await API.post('/update_patient', patient, {
+        const response = await API.put('/update_patient', patient, {
             headers: {
                 'Content-Type': 'application/json'
             }

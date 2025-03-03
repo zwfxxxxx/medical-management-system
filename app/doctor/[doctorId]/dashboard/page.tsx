@@ -11,6 +11,7 @@ import { API } from "@/lib/action/API";
 import Link from "next/link";
 import { useAuthStore } from "@/store/authState";
 import UserHead from "@/components/UserHead";
+import ReportModal from "@/components/ReportModal";
 
 interface Doctor {
   id: number;
@@ -27,6 +28,8 @@ interface Doctor {
 
 interface Appointment {
   id: string;
+  doctorId: string;
+  patientId: string;
   doctor_name: string;
   department_name: string;
   patient_name: string;
@@ -58,14 +61,9 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
   // 获取预约信息
   const fetchAppointments = async () => {
     try {
-      const doctorToken = localStorage.getItem("token");
+      // const doctorToken = localStorage.getItem("token");
       const response = await API.get(
-        `/doctor_appointments/${params.doctorId}`,
-        {
-          headers: {
-            Authorization: `Bearer ${doctorToken}`,
-          },
-        }
+        `/doctor_appointments/${params.doctorId}`
       );
       console.log("response.data", response.data);
       // 按时间排序
@@ -83,6 +81,10 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
       setIsLoading(false);
     }
   };
+  useEffect(() => {
+    // 初始化数据
+    fetchAppointments();
+  }, []);
 
   useEffect(() => {
     const interval = setInterval(fetchAppointments, 60000);
@@ -106,7 +108,7 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
       }
 
       const response = await API.put(
-        `/appointment_status/${appointmentId}`,
+        `/update_appointment_status/${appointmentId}`,
         { status: newStatus },
         {
           headers: {
@@ -163,7 +165,7 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
     };
 
     return (
-      <Card className={`p-4 ${cardStyles[status]} border-2 shadow-lg`}>
+      <Card className={`p-4 ${cardStyles[status]} border-2 shadow-lg max-h-[600px] overflow-y-auto`}>
         <div className="flex justify-between items-center mb-6 border-b border-gray-700 pb-3">
           <div className="flex items-center gap-2">
             <span className="text-xl">{icons[status]}</span>
@@ -171,7 +173,7 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
               {titles[status]}
             </h3>
           </div>
-          <div className="px-3 py-1 rounded-full bg-gray-700/50 text-sm text-gray-300">
+          <div className="px-3 py-1 rounded-full bg-gray-7 00/50 text-sm text-gray-300">
             {filteredAppointments.length} 人
           </div>
         </div>
@@ -208,16 +210,34 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
                     </Button>
                   )}
                   {status === "pending" && (
-                    <Button
-                      onClick={() =>
-                        handleStatusChange(appointment.id, "completed")
-                      }
-                      size="sm"
-                      className="bg-green-500/20 text-green-400 hover:bg-green-500/30 border border-green-500/50"
-                    >
-                      完成就诊
-                    </Button>
+                    <>
+                      <ReportModal
+                        type="create"
+                        appointmentId={appointment.id}
+                        doctorId={appointment.doctorId}
+                        patientId={appointment.patientId}
+                        handleStatusChange={handleStatusChange}
+                      />
+                      {/* <Button
+                        onClick={() =>
+                          handleStatusChange(appointment.id, "completed")
+                        }
+                        size="sm"
+                        className="bg-green-500/20 text-green-400 hover:bg-green-500/30 border border-green-500/50"
+                      >
+                        完成就诊
+                      </Button> */}
+                    </>
+
                   )}
+                  {status === "completed" && (
+                      <ReportModal
+                        type="update"
+                        appointmentId={appointment.id}
+                        handleStatusChange={handleStatusChange}
+                      />
+                      
+                    )}
                 </div>
               </div>
               {appointment.reason && (
@@ -237,6 +257,7 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
       </Card>
     );
   };
+
 
   return (
     <div className="min-h-screen bg-dark-900">
@@ -266,7 +287,7 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
               健康AI助手
             </Link>
             <div className="relative">
-              <UserHead />
+              <UserHead ispatient={false} />
             </div>
           </div>
         </nav>

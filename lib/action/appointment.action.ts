@@ -24,9 +24,9 @@ export const getAppointment = async (appointmentId: string) => {
     }
 };
 
-export const getAppointments = async () => {
+export const getWaitList = async () => {
     try {
-        const response = await API.get('/get_appointments/');
+        const response = await API.get('/get_appointments_today');
         return response.data;
     } catch (error) {
         console.log(error);
@@ -66,6 +66,16 @@ export const updateAppointmentStatus = async (appointmentId: string, status: str
         return response.data;
     } catch (error) {
         console.error('更新预约状态失败:', error);
+        throw error;
+    }
+};
+
+export const getPatientAppointments = async (patientId: string) => {
+    try {
+        const response = await API.get('/get_user_appointments/' + patientId);
+        return response.data;
+    } catch (error) {
+        console.log('获取用户预约列表失败:',error);
         throw error;
     }
 };

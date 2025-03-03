@@ -100,5 +100,6 @@ export const StatusIcon = {
     cancelled: "/assets/icons/cancelled.svg",
     active: "/assets/icons/check.svg",
     inactive: "/assets/icons/cancelled.svg",
+    completed: "/assets/icons/check.svg",
 
 };

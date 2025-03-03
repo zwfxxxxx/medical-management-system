@@ -1,6 +1,6 @@
 "use client";
 
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { DataTable } from "@/components/table/DataTable";
 import { UserAppointment, userColumns } from "@/components/table/UserCoolumn";
 import Link from "next/link";
@@ -8,90 +8,107 @@ import Image from "next/image";
 import { useAuthStore } from "@/store/authState";
 import WaitingTable from "@/components/WaitingTable";
 import UserHead from "@/components/UserHead";
+import { getWaitList } from "@/lib/action/appointment.action";
 
 const Dashboard = () => {
   const userAppointments: UserAppointment[] = [];
   const { isLoggedIn, user } = useAuthStore();
-  const waitList = [
-    {
-      doctor: "xx",
-      patient: "xxz",
-      waiters: [
-        { name: "zzx" },
-        { name: "vde" },
-        { name: "vd2" },
-        { name: "vdae" },
-        { name: "vdfe" },
-        { name: "vdew" },
-      ],
-    },
-    {
-      doctor: "xxc",
-      patient: "xxzc",
-      waiters: [
-        { name: "zzxc" },
-        { name: "vdec" },
-        { name: "vd2c" },
-        { name: "vdaec" },
-        { name: "vdfec" },
-        { name: "vdewc" },
-        { name: "zzxcxc" },
-        { name: "vdecxc" },
-        { name: "vd2cxz" },
-        { name: "vdaezxxc" },
-        { name: "vdfezxcc" },
-        { name: "vdewcxc" },
-        { name: "zzxcvxc" },
-        { name: "vdecvxc" },
-        { name: "vd cv2c" },
-        { name: "vda33ec" },
-        { name: "vdfeerw3c" },
-        { name: "vdewrec" },
-        { name: "zzxeerf2c" },
-        { name: "vderf3fgc" },
-        { name: "vdeew w2c" },
-        { name: "vda rw3ec" },
-        { name: "vd erfec" },
-        { name: "vd feewc" },
-      ],
-    },
-    {
-      doctor: "xxcx",
-      patient: "xxzcx",
-      waiters: [
-        { name: "zzxcx" },
-        { name: "vdecx" },
-        { name: "vd2cx" },
-        { name: "vdaecx" },
-        { name: "vdfecx" },
-        { name: "vdewcx" },
-      ],
-    },
-    {
-      doctor: "xxcv",
-      patient: "xxzcv",
-      waiters: [
-        { name: "zzxcv" },
-        { name: "vdecv" },
-        { name: "vd2cv" },
-        { name: "vdaecv" },
-        { name: "vdfecv" },
-        { name: "vdewcv" },
-      ],
-    },
-    {
-      doctor: "xxcb",
-      patient: "xxzcb",
-      waiters: [
-        { name: "zzxcb" },
-        { name: "vdecb" },
-        { name: "vd2cb" },
-        { name: "vdaecb" },
-        { name: "vdfecb" },
-        { name: "vdewcb" },
-      ],
-    },
-  ];
+  const [waitList, setWaitList] = useState([]);
+  
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const data = await getWaitList();
+        setWaitList(data);
+        console.log("Wait list data:", data);
+      } catch (error) {
+        console.error("Error fetching wait list:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+  
+  // const waitList = [
+  //   {
+  //     doctor: "xx",
+  //     patient: "xxz",
+  //     waiters: [
+  //       { name: "zzx" },
+  //       { name: "vde" },
+  //       { name: "vd2" },
+  //       { name: "vdae" },
+  //       { name: "vdfe" },
+  //       { name: "vdew" },
+  //     ],
+  //   },
+  //   {
+  //     doctor: "xxc",
+  //     patient: "xxzc",
+  //     waiters: [
+  //       { name: "zzxc" },
+  //       { name: "vdec" },
+  //       { name: "vd2c" },
+  //       { name: "vdaec" },
+  //       { name: "vdfec" },
+  //       { name: "vdewc" },
+  //       { name: "zzxcxc" },
+  //       { name: "vdecxc" },
+  //       { name: "vd2cxz" },
+  //       { name: "vdaezxxc" },
+  //       { name: "vdfezxcc" },
+  //       { name: "vdewcxc" },
+  //       { name: "zzxcvxc" },
+  //       { name: "vdecvxc" },
+  //       { name: "vd cv2c" },
+  //       { name: "vda33ec" },
+  //       { name: "vdfeerw3c" },
+  //       { name: "vdewrec" },
+  //       { name: "zzxeerf2c" },
+  //       { name: "vderf3fgc" },
+  //       { name: "vdeew w2c" },
+  //       { name: "vda rw3ec" },
+  //       { name: "vd erfec" },
+  //       { name: "vd feewc" },
+  //     ],
+  //   },
+  //   {
+  //     doctor: "xxcx",
+  //     patient: "xxzcx",
+  //     waiters: [
+  //       { name: "zzxcx" },
+  //       { name: "vdecx" },
+  //       { name: "vd2cx" },
+  //       { name: "vdaecx" },
+  //       { name: "vdfecx" },
+  //       { name: "vdewcx" },
+  //     ],
+  //   },
+  //   {
+  //     doctor: "xxcv",
+  //     patient: "xxzcv",
+  //     waiters: [
+  //       { name: "zzxcv" },
+  //       { name: "vdecv" },
+  //       { name: "vd2cv" },
+  //       { name: "vdaecv" },
+  //       { name: "vdfecv" },
+  //       { name: "vdewcv" },
+  //     ],
+  //   },
+  //   {
+  //     doctor: "xxcb",
+  //     patient: "xxzcb",
+  //     waiters: [
+  //       { name: "zzxcb" },
+  //       { name: "vdecb" },
+  //       { name: "vd2cb" },
+  //       { name: "vdaecb" },
+  //       { name: "vdfecb" },
+  //       { name: "vdewcb" },
+  //     ],
+  //   },
+  // ];
 
   return (
     <div className="mx-auto flex max-w-7xl flex-col space-y-14">
@@ -117,7 +134,7 @@ const Dashboard = () => {
             预约挂号
           </Link>
           {isLoggedIn ? (
-           <UserHead />
+            <UserHead ispatient={true} />
           ) : (
             <Link
               href="/login"
@@ -138,7 +155,7 @@ const Dashboard = () => {
           <div className="grid grid-cols-4 gap-6">
             {/* 医生信息模块 */}
             <Link
-              href="/doctors"
+              href="/info/doctorInfo"
               className="block rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-700 hover:border-gray-600"
             >
               <div className="flex flex-col items-center justify-center py-5">
@@ -157,7 +174,7 @@ const Dashboard = () => {
 
             {/* 就医须知模块 */}
             <Link
-              href="/guidelines"
+              href="/info/tipsInfo"
               className="block rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-700 hover:border-gray-600"
             >
               <div className="flex flex-col items-center justify-center py-5">
@@ -176,7 +193,7 @@ const Dashboard = () => {
 
             {/* 公告模块 */}
             <Link
-              href="/announcements"
+              href="/info/newsInfo"
               className="block rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-700 hover:border-gray-600"
             >
               <div className="flex flex-col items-center justify-center py-5">
@@ -195,7 +212,7 @@ const Dashboard = () => {
 
             {/* 出诊表模块 */}
             <Link
-              href="/schedule"
+              href="/info/scheduleInfo"
               className="block rounded-lg shadow-md hover:shadow-lg transition-shadow border border-gray-700 hover:border-gray-600"
             >
               <div className="flex flex-col items-center justify-center py-5">

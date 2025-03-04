@@ -24,7 +24,7 @@ const UserAppointmentsModal = ({
                         id: userAppointment.id || ""
                     },  // 根据实际结构调整字段
                 };
-                const response = await fetch("http://localhost:5000/create_report", {
+                const response = await fetch("http://localhost:5000/create_pdf_report", {
                     method: 'POST',
                     headers: {
                         "Content-Type": "application/json"
@@ -41,7 +41,7 @@ const UserAppointmentsModal = ({
                 const url = window.URL.createObjectURL(blob);
                 const a = document.createElement("a");
                 a.href = url;
-                a.download = "medical_report.pdf"; // 下载时的文件名
+                a.download = `${userAppointment.patientName}-病例报告.pdf`; // 下载时的文件名
                 document.body.appendChild(a);
                 a.click();
                 a.remove();

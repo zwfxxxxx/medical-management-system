@@ -27,25 +27,17 @@ const ReportForm = (
         if (type === "update") {
             const fetchReport = async () => {
                 const report = await getReport(appointmentId)
-                console.log("report",report)
                 setReport(report)
+                form.reset(report)  // 重置表单默认值
             }
             fetchReport()
         }
     }, [appointmentId, type])
 
-
     const form = useForm<z.infer<typeof ReportFormValidation>>({
         resolver: zodResolver(ReportFormValidation),
         defaultValues: {
-            chief_complaint: report.chief_complaint,
-            current_history: report.current_history,
-            medical_history: report.medical_history,
-            epidemiology: report.epidemiology,
-            physical_exam: report.physical_exam,
-            auxiliary_tests: report.auxiliary_tests,
-            diagnosis: report.diagnosis,
-            treatment: report.treatment,
+            ...report
         },
     })
 

@@ -25,7 +25,6 @@ export default function Home() {
     useEffect(() => {
         const fetchData = async () => {
             const result = await getDoctorTreatmentData(department);
-            console.log("result:", result)
             setDoctors(result);
         };
 

@@ -9,7 +9,6 @@ import Link from "next/link";
 const Success = async ({ params: { patientId }, searchParams }: SearchParamProps) => {
     const appointmentId = (searchParams?.appointmentId as string) || "";
     const appointmentData = await getAppointment(appointmentId);
-    console.log("appointment",appointmentData)
 
     // const doctor = Doctors.find((doctor) => doctor.doctorId === appointment.doctorId);
 

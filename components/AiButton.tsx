@@ -37,35 +37,42 @@ const AiButton = () => {
     const reader = response.body
       .pipeThrough(new TextDecoderStream())
       .getReader()
-    setChats((prev) => [...prev,  { role: "assistant", content: '' }])
+    
+    // 添加临时助手消息
+    setChats(prev => [...prev, { role: "assistant", content: '' }])
 
+    let buffer = ''
     while (true) {
       const { value, done } = await reader.read()
       if (done) break
 
-      // 处理每个数据块
-      const lines = value
-        .split("\n")
-        .filter((line: string) => line.trim() !== "")
+      buffer += value
+      const lines = buffer.split('\n')
+      buffer = lines.pop() || ''  // 保存未完成的行
+
       for (const line of lines) {
-        if (line.startsWith("data: ")) {
-          const data = line.slice(5) // 移除 'data: ' 前缀
-          if (data === "[DONE]") {
-            // 流结束
-            break
-          }
+        if (line.startsWith('data: ')) {
+          const data = line.slice(6)
+          if (data === '[DONE]') break
+          
           try {
             const json = JSON.parse(data)
             const text = json.choices[0].delta.content
             if (text) {
               setChats(prev => {
-                const newChats = [...prev]
-                newChats[newChats.length - 1].content += text
-                return newChats
+                const lastChat = prev[prev.length - 1]
+                // 确保只更新最后一个助手消息
+                if (lastChat.role === 'assistant') {
+                  return [
+                    ...prev.slice(0, -1),
+                    { ...lastChat, content: lastChat.content + text }
+                  ]
+                }
+                return prev
               })
             }
           } catch (e) {
-            console.error("Failed to parse JSON:", e)
+            console.error("JSON解析失败:", e)
           }
         }
       }
@@ -74,7 +81,6 @@ const AiButton = () => {
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
-      // 按下回车键后的逻辑
       handleSubmit()
     }
   }

@@ -8,10 +8,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "./ui/button";
-import DoctorForm from "./form/DoctorForm";
 import ReportForm from "./form/ReportForm";
+import { getReport } from "@/lib/action/report.action";
 
 const ReportModal = ({
     type,

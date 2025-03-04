@@ -65,7 +65,6 @@ const DoctorDashboard = ({ params }: { params: { doctorId: string } }) => {
       const response = await API.get(
         `/doctor_appointments/${params.doctorId}`
       );
-      console.log("response.data", response.data);
       // 按时间排序
       if (response.data) {
         const sortedAppointments = response.data.sort(

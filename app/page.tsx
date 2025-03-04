@@ -21,7 +21,6 @@ const Dashboard = () => {
       try {
         const data = await getWaitList()
         setWaitList(data)
-        console.log("Wait list data:", data)
       } catch (error) {
         console.error("Error fetching wait list:", error)
       }

@@ -43,7 +43,6 @@ const LoginForm = () => {
     try {
       const user = { phone, password };
       const isLogin = await login(user);
-      console.log("isLogin", isLogin);
       if (isLogin.status) {
         router.push(
           isLogin.role === "doctor"

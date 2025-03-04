@@ -41,7 +41,6 @@ const PatientPersonalForm = ({ patientData }: { patientData: any }) => { // 接�
       identificationNumber: patientData.identificationNumber,
     },
   });
-  console.log("patientData", patientData);
 
   async function onSubmit(values: z.infer<typeof PatientFormValidation>) {
     setIsLoading(true);
@@ -66,7 +65,6 @@ const PatientPersonalForm = ({ patientData }: { patientData: any }) => { // 接�
         identificationNumber: values.identificationNumber,
       };
       const result = await updatePatient(updatedData); // 调用更新患者信息的API
-      console.log("result", result);
     } catch (error) {
       setIsLoading(false);
       console.log(error);

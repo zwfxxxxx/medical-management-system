@@ -20,7 +20,6 @@ export default function Register({ searchParams }: RegisterProps) {
     useEffect(() => {
         const fetchPatientData = async () => {
             try {
-                console.log("id:", user.userId)
                 const data = await getPatient(user.userId);
                 setPatientData(data);
             } catch (error) {

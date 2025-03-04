@@ -22,7 +22,6 @@ export const createUser = async (user: CreateUserParams) => {
                 'Content-Type': 'application/json'
             }
         });
-        console.log(response.data);
         return response.data;
     } catch (error) {
         console.log(error);

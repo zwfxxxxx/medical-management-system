@@ -1,12 +1,16 @@
-import { API } from "./API";
+const BASE_URL = "http://localhost:5000"
 
 export const aiChat = async (message: any) => {
-    try {
-        const response = await API.post('/generate', { message });
-        return response.data;
-    } catch (error) {
-        console.log(error);
-        return error;
-    }
-
+  try {
+    const response = await fetch(BASE_URL + "/generate", {
+      method: "post",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ message }),
+    })
+    return response
+  } catch (error: any) {
+    throw new Error(error)
+  }
 }

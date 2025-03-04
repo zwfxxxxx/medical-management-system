@@ -1,54 +1,83 @@
-"use client";
+"use client"
 
-import { usePathname } from "next/navigation";
-import Image from "next/image";
+import { usePathname } from "next/navigation"
+import Image from "next/image"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
-} from "@/components/ui/popover";
-import React, { useState } from "react";
-import ChatCard from "@/components/ChatCard";
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { aiChat } from "@/lib/action/ai.action";
+} from "@/components/ui/popover"
+import React, { useState } from "react"
+import ChatCard from "@/components/ChatCard"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { aiChat } from "@/lib/action/ai.action"
 
 const AiButton = () => {
-  const pathName = usePathname();
-  const [query, setQuery] = useState("");
+  const pathName = usePathname()
+  const [query, setQuery] = useState("")
   const [chats, setChats] = useState([
     {
       role: "assistant",
       content: "你好，我是医疗助手，有什么可以帮助您？",
     },
-  ]);
+  ])
 
   if (pathName === "/register" || pathName === "/login") {
-    return null;
+    return null
   }
 
-  const handleSubmit = () => {
-    if (!query) return;
-    const newChats = [...chats, { role: "user", content: query }];
-    setChats(newChats);
-    setQuery("");
+  const handleSubmit = async () => {
+    if (!query) return
+    const newChats = [...chats, { role: "user", content: query }]
+    setChats(newChats)
+    setQuery("")
 
-    aiChat(newChats).then((response) => {
-      setChats((prev) => { 
-        return [
-          ...prev,
-          { role: "assistant", content: response.response },
-        ];
-      });
-    });
-  };
+    const response = (await aiChat(newChats)) as any
+    const reader = response.body
+      .pipeThrough(new TextDecoderStream())
+      .getReader()
+    setChats((prev) => [...prev,  { role: "assistant", content: '' }])
+
+    while (true) {
+      const { value, done } = await reader.read()
+      if (done) break
+
+      // 处理每个数据块
+      const lines = value
+        .split("\n")
+        .filter((line: string) => line.trim() !== "")
+      for (const line of lines) {
+        if (line.startsWith("data: ")) {
+          const data = line.slice(5) // 移除 'data: ' 前缀
+          if (data === "[DONE]") {
+            // 流结束
+            break
+          }
+          try {
+            const json = JSON.parse(data)
+            const text = json.choices[0].delta.content
+            if (text) {
+              setChats(prev => {
+                const newChats = [...prev]
+                newChats[newChats.length - 1].content += text
+                return newChats
+              })
+            }
+          } catch (e) {
+            console.error("Failed to parse JSON:", e)
+          }
+        }
+      }
+    }
+  }
 
   const handleKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter") {
       // 按下回车键后的逻辑
-      handleSubmit();
+      handleSubmit()
     }
-  };
+  }
 
   return (
     <Popover>
@@ -91,7 +120,7 @@ const AiButton = () => {
         </div>
       </PopoverContent>
     </Popover>
-  );
-};
+  )
+}
 
-export default AiButton;
+export default AiButton
